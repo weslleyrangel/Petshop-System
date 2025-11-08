@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petshop - Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script type="module" src="/js/routes.js" defer></script>
+</head>
+<body>
+<div class="app-layout">
+    <!-- Sidebar (Menu Lateral) -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">PETSHOP</span>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-profile">
+                <span class="welcome-text">Seja bem-vindo(a),</span>
+                <span class="user-name">ADMIN/OPERADOR</span>
+            </div>
+
+            <a href="#/" class="nav-link">
+                <i class="fas fa-home"></i> <span>Dashboard</span>
+            </a>
+            <a href="#/clientes" class="nav-link">
+                <i class="fas fa-users"></i> <span>Clientes</span>
+            </a>
+            <a href="#/pets" class="nav-link">
+                <i class="fas fa-paw"></i> <span>Pets</span>
+            </a>
+            <a href="#/agendamentos" class="nav-link">
+                <i class="fas fa-calendar-alt"></i> <span>Agendamentos</span>
+            </a>
+            <a href="#/produtos" class="nav-link">
+                <i class="fas fa-box"></i> <span>Produtos</span>
+            </a>
+            <a href="#/vendas" class="nav-link">
+                <i class="fas fa-shopping-cart"></i> <span>Vendas</span>
+            </a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="/login.html" id="logout-button" class="nav-link btn-danger-outline">
+                <i class="fas fa-sign-out-alt"></i> <span>Sair</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+
+        <header class="mobile-header">
+            <button id="mobile-menu-toggle" class="mobile-menu-button">
+                <i class="fas fa-bars"></i>
+            </button>
+            <span class="sidebar-title">PETSHOP</span>
+        </header>
+
+        <main id="app-content" class="main-content">
+            </main>
+    </div>
+
+    <div id="mobile-menu-overlay" class="mobile-overlay"></div>
+</div>
+</body>
+</html>

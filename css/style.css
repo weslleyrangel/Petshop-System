@@ -1,0 +1,628 @@
+/* Importa a fonte "Inter" do wireframe */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+/* Define as cores e fontes do wireframe como variáveis CSS */
+:root {
+    --font-family: 'Inter', sans-serif;
+    --primary-color: #50A1FF;
+    --danger-color: #FF7B7B;
+    --text-dark: #2c3e50;
+    --text-light: #5a6a7b;
+    --bg-light: #f8f9fa;
+    --bg-white: #FFFFFF;
+    --border-color: #e0e6ed;
+
+    --font-size-title: 24px;
+    --font-size-standard: 20px;
+}
+
+/* Reset básico e estilos globais */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-standard);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+/* =================================================================== */
+/* Layout Principal (Sidebar + Conteúdo) */
+/* =================================================================== */
+.app-layout {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 288px; /* w-72 */
+    background-color: var(--bg-white);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px; /* h-20 */
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-title {
+    font-size: 24px; /* text-2xl */
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.sidebar-menu {
+    flex: 1;
+    padding: 16px; /* p-4 */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* space-y-2 */
+}
+
+.sidebar-profile {
+    padding: 12px; /* px-3 py-2 */
+    margin-bottom: 8px;
+}
+
+.sidebar-profile .welcome-text {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+.sidebar-profile .user-name {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px; /* px-4 py-3 */
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 18px; /* text-lg */
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--primary-color);
+    color: var(--bg-white);
+}
+
+.nav-link.active {
+    background-color: var(--primary-color);
+    color: var(--bg-white);
+    box-shadow: 0 4px 8px rgba(80, 161, 255, 0.2);
+}
+
+.nav-link i {
+    width: 24px; /* w-6 */
+    text-align: center;
+    margin-right: 12px; /* mr-3 */
+}
+
+.sidebar-footer {
+    padding: 16px; /* p-4 */
+    border-top: 1px solid var(--border-color);
+}
+
+/* =================================================================== */
+/* Conteúdo Principal */
+/* =================================================================== */
+.main-content {
+    flex: 1;
+    padding: 32px; /* p-8 */
+    overflow-y: auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.page-title {
+    font-size: 24px; /* text-2xl */
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* =================================================================== */
+/* Botões */
+/* =================================================================== */
+.btn {
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--bg-white);
+}
+.btn-primary:hover {
+    background-color: #3a8efb;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: var(--bg-white);
+}
+.btn-danger:hover {
+    background-color: #ff5f5f;
+}
+
+.btn-danger-outline {
+    background-color: rgba(255, 123, 123, 0.1);
+    color: var(--danger-color);
+}
+.btn-danger-outline:hover {
+    background-color: var(--danger-color);
+    color: var(--bg-white);
+}
+
+.btn-secondary {
+    background-color: #e9ecef; /* bg-gray-200 */
+    color: #343a40;
+}
+.btn-secondary:hover {
+    background-color: #ced4da;
+}
+
+/* =================================================================== */
+/* Formulários */
+/* =================================================================== */
+.form-container {
+    max-width: 900px; /* max-w-4xl */
+    background-color: var(--bg-white);
+    padding: 32px; /* p-8 */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.form-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* space-y-6 */
+}
+
+.form-group {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Layout label/input */
+    align-items: center;
+    gap: 16px;
+}
+
+.form-group-top {
+    align-items: start;
+}
+
+.form-label {
+    font-size: 18px; /* text-lg */
+    font-weight: 500;
+    color: var(--text-light);
+    text-align: right;
+}
+
+.form-group-top .form-label {
+    margin-top: 10px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 18px;
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(80, 161, 255, 0.2);
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    padding-top: 24px;
+}
+
+/* Layout de formulário em grid (Cadastro Produto) */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+}
+.form-group-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.form-group-grid .form-label {
+    text-align: left;
+    font-size: 18px;
+}
+.form-group-grid.col-span-2 {
+    grid-column: span 2;
+}
+
+
+/* =================================================================== */
+/* Tabelas */
+/* =================================================================== */
+.table-container {
+    background-color: var(--bg-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.content-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.content-table thead {
+    background-color: var(--bg-light);
+}
+
+.content-table th {
+    padding: 12px 24px; /* px-6 py-3 */
+    text-align: left;
+    font-size: 12px; /* text-xs */
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.content-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+}
+.content-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.content-table tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+.content-table td {
+    padding: 16px 24px; /* px-6 py-4 */
+    font-size: 18px; /* text-lg */
+    color: var(--text-dark);
+    white-space: nowrap;
+}
+
+/* =================================================================== */
+/* Dashboard */
+/* =================================================================== */
+.dashboard-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+}
+.action-card {
+    background-color: var(--bg-white);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.action-card:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+.action-card h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+.action-card p {
+    font-size: 16px;
+    color: var(--text-light);
+    margin-top: 4px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 32px;
+}
+.stat-card {
+    background-color: var(--bg-white);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.stat-card h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-light);
+}
+.stat-card p {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-top: 8px;
+}
+
+.dashboard-table {
+    margin-top: 32px;
+}
+.dashboard-table h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* =================================================================== */
+/* Página de Login */
+/* =================================================================== */
+.login-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 32px 24px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 400px; /* sm:max-w-sm */
+}
+
+.login-header {
+    text-align: center;
+}
+.login-header .app-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+.login-header .login-title {
+    margin-top: 24px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.login-error-box {
+    margin-top: 16px;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: rgba(255, 123, 123, 0.1);
+    color: var(--danger-color);
+    font-weight: 500;
+}
+.login-error-box p {
+    font-size: 14px;
+}
+
+.login-form {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.login-form .form-group-grid {
+    gap: 8px;
+}
+.login-form .form-label {
+    text-align: left;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+.login-form .btn-primary {
+    padding: 12px;
+    font-size: 20px;
+}
+
+.login-form .form-input.error {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 2px rgba(255, 123, 123, 0.2);
+}
+
+.login-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 18px;
+    color: var(--text-light);
+}
+.login-footer a {
+    font-weight: 600;
+}
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    position: relative; /* Para o overlay */
+}
+
+.mobile-header {
+    display: none; /* Escondido no desktop */
+    height: 60px;
+    background-color: var(--bg-white);
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+    padding: 0 16px;
+    flex-shrink: 0;
+}
+
+.mobile-menu-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-dark);
+    cursor: pointer;
+    margin-right: 16px;
+}
+
+.mobile-overlay {
+    display: none; /* Escondido por padrão */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998; /* Abaixo do menu, acima do conteúdo */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+
+    /* 1. Mostra o cabeçalho móvel e esconde o título da Petshop nele */
+    .mobile-header {
+        display: flex;
+    }
+    .mobile-header .sidebar-title {
+        color: var(--primary-color);
+        font-size: 20px;
+        font-weight: 700;
+    }
+    
+    /* 2. Layout da Sidebar (Menu Lateral) */
+    .sidebar {
+        /* Em vez de 'display: none', vamos movê-la para fora da tela */
+        position: fixed; /* Fixa na tela */
+        left: 0;
+        top: 0;
+        height: 100%;
+        z-index: 999; /* Fica acima de tudo */
+        transform: translateX(-100%); /* Esconde à esquerda */
+        transition: transform 0.3s ease;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    
+    /* ESTADO ATIVO: Quando o menu deve aparecer */
+    .sidebar.active {
+        transform: translateX(0); /* Move para a posição 0 (visível) */
+    }
+
+    /* 3. Conteúdo principal */
+    .app-layout {
+        display: block;
+    }
+    
+    .content-wrapper {
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    .main-content {
+        padding: 16px; 
+    }
+
+    /* 4. Ajusta o cabeçalho da página */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    /* 5. Formulários (Layout Padrão, ex: Clientes) */
+    .form-group {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .form-label {
+        text-align: left;
+    }
+    .form-group-top .form-label {
+        margin-top: 0;
+    }
+
+    /* 6. Formulários (Layout Grid, ex: Produtos) */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-group-grid.col-span-2 {
+        grid-column: span 1;
+    }
+    .form-container {
+        padding: 16px;
+    }
+
+    /* 7. Dashboard (Stats e Ações) */
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-actions {
+        grid-template-columns: 1fr;
+    }
+
+    /* 8. Tabelas (Permitir rolagem horizontal) */
+    .table-container {
+        overflow-x: auto;
+    }
+    .content-table {
+        min-width: 700px;
+    }
+
+    /* 9. Página de Login */
+    .login-box {
+        padding: 0 16px;
+    }
+}

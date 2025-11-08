@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petshop - Cadastrar Usuário</title>
+    <link rel="stylesheet" href="/css/style.css" /> 
+</head>
+<body>
+<div class="login-page-container">
+    <div class="login-box">
+        <header class="login-header">
+            <h1 class="app-title">PETSHOP</h1>
+            <h2 class="login-title">CRIAR CONTA</h2>
+
+            <div id="register-error-box" class="login-error-box" style="display: none;">
+                </div>
+        </header>
+
+        <form class="login-form" id="register-form">
+            <div class="form-group-grid">
+                <label for="nome" class="form-label">Nome Completo:</label>
+                <input id="nome" name="nome" type="text" autocomplete="name" required class="form-input">
+            </div>
+
+            <div class="form-group-grid">
+                <label for="username" class="form-label">E-mail:</label>
+                <input id="username" name="username" type="email" autocomplete="email" required class="form-input">
+            </div>
+
+            <div class="form-group-grid">
+                <label for="password" class="form-label">Senha:</label>
+                <input id="password" name="password" type="password" autocomplete="new-password" required class="form-input">
+            </div>
+             <div class="form-group-grid">
+                <label for="confirmPassword" class="form-label">Confirmar Senha:</label>
+                <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required class="form-input">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Cadastrar
+                </button>
+            </div>
+        </form>
+        <p class="login-footer">
+            Já é membro?
+            <a href="login.html">Fazer Login</a>
+        </p>
+    </div>
+</div>
+
+<script type="module">
+    import { postData } from '../js/utils/api.js';
+
+    document.getElementById("register-form").addEventListener("submit", async (e) => {
+        e.preventDefault(); 
+
+        const form = e.target;
+        const errorBox = document.getElementById("register-error-box");
+        
+        errorBox.style.display = "none";
+        form.password.classList.remove('error');
+        form.confirmPassword.classList.remove('error');
+
+        const nome = form.nome.value;
+        const username = form.username.value;
+        const password = form.password.value;
+        const confirmPassword = form.confirmPassword.value;
+
+        if (password !== confirmPassword) {
+            errorBox.innerHTML = `<p>As senhas não conferem.</p>`;
+            errorBox.style.display = "block";
+            form.password.classList.add('error');
+            form.confirmPassword.classList.add('error');
+            return;
+        }
+
+        try {
+            const response = await postData("/api/v1/auth/register", { nome, username, password });
+
+            alert("Cadastro realizado com sucesso! Faça o login.");
+            window.location.href = "login.html"; // Redireciona para o login
+
+        } catch (error) {
+            errorBox.innerHTML = `<p>Erro ao cadastrar.</p><p>${error.message || 'Tente outro e-mail.'}</p>`;
+            errorBox.style.display = "block";
+        }
+    });
+</script>
+</body>
+</html>
