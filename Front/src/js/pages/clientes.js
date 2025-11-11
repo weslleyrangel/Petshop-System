@@ -133,7 +133,7 @@ function renderFormulario(container, cliente = {}) {
 async function handleSave(container, isEdit) {
     const form = document.getElementById('form-cliente');
     const formData = new FormData(form);
-    const clienteData = Object.fromEntries(formData.entries()); // Converte o form em objeto
+    const clienteData = Object.fromEntries(formData.entries()); 
 
     // Define o endpoint e o método
     const endpoint = isEdit ? `/api/v1/clientes/${clienteData.id}` : '/api/v1/clientes';
