@@ -6,6 +6,7 @@
     --font-family: 'Inter', sans-serif;
     --primary-color: #50A1FF;
     --danger-color: #FF7B7B;
+    --warning-color: #FFC107; /* Amarelo para edição */
     --text-dark: #2c3e50;
     --text-light: #5a6a7b;
     --bg-light: #f8f9fa;
@@ -199,6 +200,44 @@ a {
 }
 .btn-secondary:hover {
     background-color: #ced4da;
+}
+
+/* Botões de Ação (Ícones) */
+.actions-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 16px;
+}
+
+.btn-edit {
+    background-color: rgba(80, 161, 255, 0.1);
+    color: var(--primary-color);
+}
+.btn-edit:hover {
+    background-color: var(--primary-color);
+    color: var(--bg-white);
+}
+
+.btn-delete {
+    background-color: rgba(255, 123, 123, 0.1);
+    color: var(--danger-color);
+}
+.btn-delete:hover {
+    background-color: var(--danger-color);
+    color: var(--bg-white);
 }
 
 /* =================================================================== */

@@ -9,4 +9,5 @@ public interface PetRepository {
     List<Pet> findAll();
     void deleteById(Long id);
     List<Pet> findByClienteId(Long clienteId);
+    boolean existsById(Long id);
 }

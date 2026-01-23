@@ -9,4 +9,5 @@ public interface ClienteRepository {
     List<Cliente> findAll();
     void deleteById(Long id);
     Optional<Cliente> findByCpf(String cpf);
+    boolean existsById(Long id);
 }

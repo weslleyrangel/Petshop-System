@@ -1,14 +1,10 @@
 import { fetchData, postData } from '../utils/api.js';
 
-// Variável para "cachear" os dados e evitar buscas repetidas
 let listaClientes = [];
 
-/**
- * Renderiza a página de Clientes (Lista).
- * @param {HTMLElement} container - O elemento <main> onde o conteúdo será injetado.
- */
 export async function render(container) {
-    // 1. Define o HTML da lista
+    const userRole = localStorage.getItem('role'); // Pega a role do usuário
+
     container.innerHTML = `
         <div class="page-header">
             <h1 class="page-title">Lista de Clientes</h1>
@@ -22,8 +18,8 @@ export async function render(container) {
                     <th>ID</th>
                     <th>Nome</th>
                     <th>Email</th>
-                    <th>Telefone</th>
                     <th>CPF</th>
+                    <th>Ações</th>
                 </tr>
                 </thead>
                 <tbody id="tabela-clientes">
@@ -33,12 +29,10 @@ export async function render(container) {
         </div>
     `;
 
-    // 2. Adiciona o listener para o botão "Cadastrar"
     document.getElementById('btn-novo-cliente').addEventListener('click', () => {
-        renderFormulario(container); // Chama a função que renderiza o formulário
+        renderFormulario(container);
     });
 
-    // 3. Busca e preenche os dados da tabela
     try {
         listaClientes = await fetchData('/api/v1/clientes');
         const tabela = document.getElementById('tabela-clientes');
@@ -49,11 +43,44 @@ export async function render(container) {
                     <td>${cliente.id}</td>
                     <td>${cliente.nome}</td>
                     <td>${cliente.email}</td>
-                    <td>${cliente.telefone}</td>
                     <td>${cliente.cpf}</td>
-                    <!-- Adicionar botões de Editar/Excluir aqui se necessário -->
+                    <td class="actions-cell">
+                        <button class="btn-icon btn-edit" data-id="${cliente.id}" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${userRole === 'ADMIN' ? `
+                        <button class="btn-icon btn-delete" data-id="${cliente.id}" title="Excluir">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>` : ''}
+                    </td>
                 </tr>
             `).join('');
+
+            // Adiciona listeners aos botões de ação
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    const cliente = listaClientes.find(c => c.id == id);
+                    renderFormulario(container, cliente);
+                });
+            });
+
+            if (userRole === 'ADMIN') {
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.getAttribute('data-id');
+                        if (confirm('Tem certeza que deseja excluir este cliente?')) {
+                            try {
+                                await postData(`/api/v1/clientes?id=${id}`, {}, 'DELETE');
+                                render(container); // Recarrega a lista
+                            } catch (error) {
+                                alert('Erro ao excluir cliente: ' + error.message);
+                            }
+                        }
+                    });
+                });
+            }
+
         } else {
             tabela.innerHTML = '<tr><td colspan="5">Nenhum cliente cadastrado.</td></tr>';
         }
@@ -62,11 +89,6 @@ export async function render(container) {
     }
 }
 
-/**
- * Renderiza o Formulário de Cadastro/Edição de Cliente.
- * @param {HTMLElement} container - O elemento <main>.
- * @param {object} cliente - Opcional. O objeto do cliente para edição.
- */
 function renderFormulario(container, cliente = {}) {
     const isEdit = cliente.id != null;
     const pageTitle = isEdit ? 'Editar Cliente' : 'Cadastro de Cliente';
@@ -75,7 +97,6 @@ function renderFormulario(container, cliente = {}) {
         <h1 class="page-title">${pageTitle}</h1>
         <div class="form-container">
             <form id="form-cliente" class="form-layout">
-                <!-- Campo oculto para ID em caso de edição -->
                 <input type="hidden" id="id" name="id" value="${cliente.id || ''}">
 
                 <div class="form-group">
@@ -85,10 +106,6 @@ function renderFormulario(container, cliente = {}) {
                 <div class="form-group">
                     <label for="email" class="form-label">E-mail:</label>
                     <input type="email" id="email" name="email" class="form-input" value="${cliente.email || ''}" required />
-                </div>
-                <div class="form-group">
-                    <label for="telefone" class="form-label">Telefone:</label>
-                    <input type="text" id="telefone" name="telefone" class="form-input" value="${cliente.telefone || ''}" />
                 </div>
                 <div class="form-group">
                     <label for="cpf" class="form-label">CPF:</label>
@@ -101,9 +118,8 @@ function renderFormulario(container, cliente = {}) {
                 <div class="form-group">
                     <label for="sexo" class="form-label">Sexo:</label>
                     <select id="sexo" name="sexo" class="form-select">
-                        <option value="Masculino" ${cliente.sexo === 'Masculino' ? 'selected' : ''}>Masculino</option>
-                        <option value="Feminino" ${cliente.sexo === 'Feminino' ? 'selected' : ''}>Feminino</option>
-                        <option value="Nao Informar" ${cliente.sexo === 'Nao Informar' ? 'selected' : ''}>Não Informar</option>
+                        <option value="M" ${cliente.sexo === 'M' ? 'selected' : ''}>Masculino</option>
+                        <option value="F" ${cliente.sexo === 'F' ? 'selected' : ''}>Feminino</option>
                     </select>
                 </div>
                 <div class="form-actions">
@@ -114,9 +130,8 @@ function renderFormulario(container, cliente = {}) {
         </div>
     `;
 
-    // Adiciona os listeners aos botões do formulário
     document.getElementById('btn-cancelar').addEventListener('click', () => {
-        render(container); // Volta para a lista
+        render(container);
     });
 
     document.getElementById('form-cliente').addEventListener('submit', async (e) => {
@@ -125,25 +140,19 @@ function renderFormulario(container, cliente = {}) {
     });
 }
 
-/**
- * Lida com o salvamento (POST ou PUT) do formulário de cliente.
- * @param {HTMLElement} container - O elemento <main>.
- * @param {boolean} isEdit - Define se é uma atualização (PUT) ou criação (POST).
- */
 async function handleSave(container, isEdit) {
     const form = document.getElementById('form-cliente');
     const formData = new FormData(form);
     const clienteData = Object.fromEntries(formData.entries()); 
 
-    // Define o endpoint e o método
-    const endpoint = isEdit ? `/api/v1/clientes/${clienteData.id}` : '/api/v1/clientes';
+    // O backend espera PUT na mesma URL base para edição, ou POST para criação
     const method = isEdit ? 'PUT' : 'POST';
 
     try {
-        await postData(endpoint, clienteData, method);
-        render(container); // Sucesso! Volta para a lista de clientes.
+        await postData('/api/v1/clientes', clienteData, method);
+        render(container);
     } catch (error) {
         console.error("Erro ao salvar cliente:", error);
-        alert(`Erro ao salvar: ${error.message}`); // Exibe um alerta simples
+        alert(`Erro ao salvar: ${error.message}`);
     }
 }

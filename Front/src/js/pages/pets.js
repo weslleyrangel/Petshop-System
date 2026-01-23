@@ -1,14 +1,11 @@
 import { fetchData, postData } from '../utils/api.js';
 
-// Cache de dados para evitar buscas desnecessárias
 let listaPets = [];
 let listaClientes = [];
 
-/**
- * Renderiza a página de Pets (Lista).
- * @param {HTMLElement} container - O elemento <main> onde o conteúdo será injetado.
- */
 export async function render(container) {
+    const userRole = localStorage.getItem('role');
+
     container.innerHTML = `
         <div class="page-header">
             <h1 class="page-title">Lista de Pets</h1>
@@ -24,10 +21,11 @@ export async function render(container) {
                     <th>Raça</th>
                     <th>Idade</th>
                     <th>Dono</th>
+                    <th>Ações</th>
                 </tr>
                 </thead>
                 <tbody id="tabela-pets">
-                    <tr><td colspan="6">Carregando...</td></tr>
+                    <tr><td colspan="7">Carregando...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -49,27 +47,54 @@ export async function render(container) {
                     <td>${pet.especie}</td>
                     <td>${pet.raca}</td>
                     <td>${pet.idade}</td>
-                    <td>${pet.cliente?.nome || 'N/A'}</td> <!-- 'cliente.nome' pode precisar de ajuste dependendo do JSON -->
+                    <td>${pet.dono || 'N/A'}</td>
+                    <td class="actions-cell">
+                        <button class="btn-icon btn-edit" data-id="${pet.id}" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${userRole === 'ADMIN' ? `
+                        <button class="btn-icon btn-delete" data-id="${pet.id}" title="Excluir">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>` : ''}
+                    </td>
                 </tr>
             `).join('');
+
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    const pet = listaPets.find(p => p.id == id);
+                    renderFormulario(container, pet);
+                });
+            });
+
+            if (userRole === 'ADMIN') {
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.getAttribute('data-id');
+                        if (confirm('Tem certeza que deseja excluir este pet?')) {
+                            try {
+                                await postData(`/api/v1/pets?id=${id}`, {}, 'DELETE');
+                                render(container);
+                            } catch (error) {
+                                alert('Erro ao excluir pet: ' + error.message);
+                            }
+                        }
+                    });
+                });
+            }
         } else {
-            tabela.innerHTML = '<tr><td colspan="6">Nenhum pet cadastrado.</td></tr>';
+            tabela.innerHTML = '<tr><td colspan="7">Nenhum pet cadastrado.</td></tr>';
         }
     } catch (error) {
-        document.getElementById('tabela-pets').innerHTML = `<tr><td colspan="6">Erro ao carregar pets.</td></tr>`;
+        document.getElementById('tabela-pets').innerHTML = `<tr><td colspan="7">Erro ao carregar pets.</td></tr>`;
     }
 }
 
-/**
- * Renderiza o Formulário de Cadastro/Edição de Pet.
- * @param {HTMLElement} container - O elemento <main>.
- * @param {object} pet - Opcional. O objeto do pet para edição.
- */
 async function renderFormulario(container, pet = {}) {
     const isEdit = pet.id != null;
     const pageTitle = isEdit ? 'Editar Pet' : 'Cadastro de Pet';
 
-    // Busca clientes para o <select>
     try {
         listaClientes = await fetchData('/api/v1/clientes');
     } catch (error) {
@@ -77,8 +102,16 @@ async function renderFormulario(container, pet = {}) {
         return;
     }
 
+    // Tenta encontrar o ID do dono pelo nome se o ID não estiver disponível diretamente no objeto pet
+    let donoIdSelecionado = '';
+    if (pet.dono) {
+        // Se 'dono' for uma string (nome), tentamos achar o cliente correspondente
+        const clienteEncontrado = listaClientes.find(c => c.nome === pet.dono);
+        if (clienteEncontrado) donoIdSelecionado = clienteEncontrado.id;
+    }
+
     const clientesOptions = listaClientes.map(cliente =>
-        `<option value="${cliente.id}" ${pet.cliente?.id === cliente.id ? 'selected' : ''}>
+        `<option value="${cliente.id}" ${donoIdSelecionado == cliente.id ? 'selected' : ''}>
             ${cliente.nome}
          </option>`
     ).join('');
@@ -113,7 +146,7 @@ async function renderFormulario(container, pet = {}) {
                 </div>
                 <div class="form-group">
                     <label for="cliente" class="form-label">Dono:</label>
-                    <select id="cliente" name="clienteId" class="form-select" required>
+                    <select id="cliente" name="donoId" class="form-select" required>
                         <option value="">Selecione um dono</option>
                         ${clientesOptions}
                     </select>
@@ -138,16 +171,11 @@ async function renderFormulario(container, pet = {}) {
         const formData = new FormData(form);
         const petData = Object.fromEntries(formData.entries());
 
-        // Converte o 'clienteId' para um objeto, como o back-end @RestController pode esperar
-        petData.cliente = { id: parseInt(petData.clienteId) };
-        delete petData.clienteId; // Limpa o campo antigo
-
-        const endpoint = isEdit ? `/api/v1/pets/${petData.id}` : '/api/v1/pets';
         const method = isEdit ? 'PUT' : 'POST';
 
         try {
-            await postData(endpoint, petData, method);
-            render(container); // Sucesso! Volta para a lista
+            await postData('/api/v1/pets', petData, method);
+            render(container);
         } catch (error) {
             console.error("Erro ao salvar pet:", error);
             alert(`Erro ao salvar: ${error.message}`);

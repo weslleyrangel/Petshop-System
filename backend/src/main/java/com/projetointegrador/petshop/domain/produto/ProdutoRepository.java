@@ -8,5 +8,5 @@ public interface ProdutoRepository {
     Optional<Produto> findById(Long id);
     List<Produto> findAll();
     void deleteById(Long id);
-
+    boolean existsById(Long id);
 }

@@ -40,7 +40,7 @@ public class Venda {
         }
     }
 
-    public BigDecimal getValoTotal(){
+    public BigDecimal getValorTotal(){
         return itens.stream().map(ItemVenda::getSubTotal).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -49,6 +49,13 @@ public class Venda {
             throw new DomainException("A venda só pode ser concluida se estiver PENDENTE.");
         }
         this.status = VendaStatus.CONCLUIDA;
+    }
+
+    public void cancelarVenda() {
+        if (this.status == VendaStatus.CONCLUIDA) {
+            throw new DomainException("Não é possível cancelar uma venda já concluída.");
+        }
+        this.status = VendaStatus.CANCELADA;
     }
 
     public Long getId() {

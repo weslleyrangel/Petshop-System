@@ -35,6 +35,15 @@ public class User {
         return encoder.matches(rawPassword, this.hashedPassword);
     }
 
+    public void changePassword(String newRawPassword, PasswordEncoder encoder) {
+        if (newRawPassword == null || newRawPassword.length() < 6) { // Ajustei para 6 pois 10 pode ser muito restritivo para raw, mas o hash tem que ser longo. O validate original checava o hash length < 10.
+             // O validate original checa hashedPassword.length() < 10. BCrypt gera 60 chars.
+             // Então aqui vou validar a raw password com uma regra de negócio razoável.
+             throw new DomainException("A nova senha deve ter pelo menos 6 caracteres.");
+        }
+        this.hashedPassword = encoder.encode(newRawPassword);
+    }
+
     public Long getId() {
         return id;
     }
@@ -57,5 +66,6 @@ public class User {
 
     public interface PasswordEncoder{
         boolean matches(String rawPassword, String encodedPassword);
+        String encode(String rawPassword);
     }
 }

@@ -4,70 +4,92 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0a9a37eb-9626-416d-9821-5e359ace4e08" name="Changes" comment="Feat: Desenvolvendo testes unitários para a camada de domain. Iniciando com a entidade de cliente.">
-      <change afterPath="$PROJECT_DIR$/backend/src/test/java/com/projetointegrador/petshop/application/cliente/ClienteServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Petshop System.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+    <list default="true" id="2b565640-b017-4f21-926d-d06afdcb358a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Front/src/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/forgot-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/forgot-password.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/js/pages/agendamentos.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/js/pages/agendamentos.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/js/pages/clientes.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/js/pages/clientes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/js/pages/dashboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/js/pages/dashboard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/js/pages/pets.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/js/pages/pets.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/js/pages/vendas.js" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/js/pages/vendas.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Front/src/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/Front/src/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/PetshopApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/PetshopApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/agendamento/AgendamentoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/agendamento/AgendamentoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/auth/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/auth/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/auth/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/auth/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/cliente/ClienteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/cliente/ClienteService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/pet/PetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/pet/PetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/produto/ProdutoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/application/produto/ProdutoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/agendamento/Agendamentos.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/agendamento/Agendamentos.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/auth/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/auth/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/auth/UserTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/cliente/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/cliente/Cliente.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/cliente/ClienteRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/cliente/ClienteRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/cliente/ClienteTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/pet/Pet.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/pet/Pet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/pet/PetRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/pet/PetRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/produto/Produto.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/produto/Produto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/produto/ProdutoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/produto/ProdutoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/produto/ProdutoTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/vendas/ItemVenda.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/vendas/ItemVenda.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/vendas/Venda.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/domain/vendas/Venda.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/api/agendamento/AgendamentoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/api/agendamento/AgendamentoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/api/auth/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/api/auth/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/api/cliente/ClienteController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/api/cliente/ClienteController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/api/pet/PetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/api/pet/PetController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/persistence/cliente/ClienteJpaEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/persistence/cliente/ClienteRepositoryAdapter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/persistence/cliente/ClienteRepositoryImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/persistence/pet/PetEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/projetointegrador/petshop/infrastructure/persistence/pet/PetRepositoryAdapter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/com/projetointegrador/petshop/PetshopApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/projetointegrador/petshop/PetshopApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/com/projetointegrador/petshop/application/cliente/ClienteServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/projetointegrador/petshop/application/cliente/ClienteServiceTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 2
 }</component>
-  <component name="ProjectId" id="35JeWYLv338qnHe1RorG9dbZZdv" />
+  <component name="ProjectId" id="38MfPiM9caX4L4lS5BCnMXPH2So" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Application.PetshopApplication.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.ClienteServiceTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ClienteTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ClienteTest.givenInvalidEmail_whenCreatingCliente_thenShouldThrowDomainException.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ClienteTest.givenNullName_whenCreatingCliente_thenShouldThrowDomainException.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.PetshopApplicationTests.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProdutoTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProdutoTest.givenNegativePrice_whenCreatingProduto_thenShouldThrowDomainException.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProdutoTest.givenNullName_whenCreatingProduto_thenShouldThrowDomainException.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProdutoTest.givenValidInputs_whenCreatingProduto_thenShouldBeCreatedSucessesfully.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProdutoTest.givenZeroPrice_whenCreatingProduto_thenShouldThrowDomainException.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ProdutoTest.whenDecrementingStock_thenShouldUpdateQuantity.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserTest.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="JUnit.PetshopApplicationTests">
+  <component name="RunManager" selected="Application.PetshopApplication">
+    <configuration name="PetshopApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.projetointegrador.petshop.PetshopApplication" />
+      <module name="petshop" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.projetointegrador.petshop.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="ClienteServiceTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="petshop" />
       <extension name="coverage">
@@ -83,89 +105,21 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="PetshopApplicationTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="petshop" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.projetointegrador.petshop.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.projetointegrador.petshop" />
-      <option name="MAIN_CLASS_NAME" value="com.projetointegrador.petshop.PetshopApplicationTests" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ProdutoTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="petshop" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.projetointegrador.petshop.domain.produto.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.projetointegrador.petshop.domain.produto" />
-      <option name="MAIN_CLASS_NAME" value="com.projetointegrador.petshop.domain.produto.ProdutoTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ProdutoTest.whenDecrementingStock_thenShouldUpdateQuantity" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="petshop" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.projetointegrador.petshop.domain.produto.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.projetointegrador.petshop.domain.produto" />
-      <option name="MAIN_CLASS_NAME" value="com.projetointegrador.petshop.domain.produto.ProdutoTest" />
-      <option name="METHOD_NAME" value="whenDecrementingStock_thenShouldUpdateQuantity" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="UserTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="petshop" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.projetointegrador.petshop.domain.auth.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.projetointegrador.petshop.domain.auth" />
-      <option name="MAIN_CLASS_NAME" value="com.projetointegrador.petshop.domain.auth.UserTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.PetshopApplicationTests" />
+        <item itemvalue="Application.PetshopApplication" />
         <item itemvalue="JUnit.ClienteServiceTest" />
-        <item itemvalue="JUnit.UserTest" />
-        <item itemvalue="JUnit.ProdutoTest" />
-        <item itemvalue="JUnit.ProdutoTest.whenDecrementingStock_thenShouldUpdateQuantity" />
       </list>
     </recent_temporary>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="0a9a37eb-9626-416d-9821-5e359ace4e08" name="Changes" comment="" />
-      <created>1762832635046</created>
+      <changelist id="2b565640-b017-4f21-926d-d06afdcb358a" name="Changes" comment="" />
+      <created>1768614338438</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1762832635046</updated>
+      <updated>1768614338438</updated>
     </task>
     <servers />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Feat: Desenvolvendo testes unitários para a camada de domain. Iniciando com a entidade de cliente." />
-    <option name="LAST_COMMIT_MESSAGE" value="Feat: Desenvolvendo testes unitários para a camada de domain. Iniciando com a entidade de cliente." />
   </component>
 </project>

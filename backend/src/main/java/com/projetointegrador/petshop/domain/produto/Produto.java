@@ -47,6 +47,21 @@ public class Produto {
         this.quantidadeEstoque -= quantidade;
     }
 
+    public void incrementarEstoque(int quantidade) {
+        if (quantidade <= 0) {
+            throw new DomainException("A quantidade a incrementar deve ser positiva.");
+        }
+        this.quantidadeEstoque += quantidade;
+    }
+
+    public void atualizarDados(String nome, String categoria, BigDecimal preco, String descricao) {
+        this.nome = nome;
+        this.categoria = categoria;
+        this.preco = preco;
+        this.descricao = descricao;
+        validate();
+    }
+
     public Long getId() {
         return id;
     }

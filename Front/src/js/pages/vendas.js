@@ -1,4 +1,4 @@
-import { fetchData, postData, formatDate, formatCurrency } from '../utils/api.js';
+import { fetchData, postData, formatCurrency } from '../utils/api.js';
 
 /**
  * Renderiza a página de Vendas (Lista).
@@ -40,9 +40,9 @@ export async function render(container) {
             tabela.innerHTML = vendas.map(venda => `
                 <tr>
                     <td>${venda.id}</td>
-                    <td>${venda.cliente?.nome || 'N/A'}</td>
-                    <td>${formatDate(venda.dataHora)}</td>
-                    <td>${formatCurrency(venda.valorTotal)}</td>
+                    <td>${venda.cliente || 'N/A'}</td> <!-- Backend envia o nome direto -->
+                    <td>${venda.data || 'N/A'}</td>    <!-- Backend envia a data formatada -->
+                    <td>${formatCurrency(venda.total)}</td> <!-- Backend envia 'total' -->
                     <td>${venda.status || 'N/A'}</td>
                 </tr>
             `).join('');
@@ -61,7 +61,7 @@ export async function render(container) {
 async function renderFormulario(container) {
     // Listas para os <select>
     let clientesOptions = '';
-    let produtosOptions = ''; // A Lógica de busca de produto seria mais complexa
+    let produtosOptions = ''; 
 
     try {
         const clientes = await fetchData('/api/v1/clientes');
@@ -88,10 +88,10 @@ async function renderFormulario(container) {
                 </div>
                 <div class="form-group form-group-top">
                     <label for="itens" class="form-label">Produtos:</label>
-                    <!-- NOTA: Refatorar isso para um componente de "carrinho" é o ideal -->
                     <select id="itens" name="itens" multiple class="form-select" style="min-height: 200px;" required>
                         ${produtosOptions}
                     </select>
+                    <small style="display: block; margin-top: 5px; color: #666;">Segure Ctrl (ou Cmd) para selecionar múltiplos produtos.</small>
                 </div>
                 <div class="form-actions">
                     <button type="button" id="btn-cancelar" class="btn btn-secondary">Cancelar</button>
@@ -110,7 +110,7 @@ async function renderFormulario(container) {
         // Pega todos os IDs dos produtos selecionados no <select multiple>
         const selectedProdutos = [...form.itens.options]
             .filter(option => option.selected)
-            .map(option => ({ produto: { id: parseInt(option.value) }, quantidade: 1 })); // Quantidade fixa 1 (aqui seria a refatoração)
+            .map(option => ({ produto: { id: parseInt(option.value) }, quantidade: 1 })); // Quantidade fixa 1
 
         if (selectedProdutos.length === 0) {
             alert("Selecione ao menos um produto.");
@@ -120,7 +120,7 @@ async function renderFormulario(container) {
         const vendaData = {
             cliente: { id: parseInt(clienteId) },
             itens: selectedProdutos,
-            status: 'CONCLUIDA' // Define um status padrão
+            status: 'CONCLUIDA' 
         };
 
         try {

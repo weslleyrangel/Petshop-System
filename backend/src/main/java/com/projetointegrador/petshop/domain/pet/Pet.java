@@ -23,14 +23,14 @@ public class Pet {
         this.sexo = sexo;
         this.observacoes = observacoes;
         this.dono = dono;
-        validade();
+        validate();
     }
 
     public Pet(String nome, String especie, String raca, int idade, String sexo, String obeservacoes, Cliente dono){
         this(null, nome, especie, raca, idade, sexo, obeservacoes, dono);
     }
 
-    private void validade(){
+    private void validate(){
         if(nome == null || nome.trim().isEmpty()){
             throw new DomainException("O nome do pet é obrigatório.");
         }
@@ -42,38 +42,41 @@ public class Pet {
         }
     }
 
+    public void atualizarDados(String nome, String especie, String raca, int idade, String sexo, String observacoes) {
+        this.nome = nome;
+        this.especie = especie;
+        this.raca = raca;
+        this.idade = idade;
+        this.sexo = sexo;
+        this.observacoes = observacoes;
+        validate();
+    }
+
     public Long getId() {
         return id;
     }
-
     public String getNome() {
         return nome;
     }
-
     public String getEspecie() {
         return especie;
     }
-
     public String getRaca() {
         return raca;
     }
-
     public int getIdade() {
         return idade;
     }
-
     public String getSexo() {
         return sexo;
     }
-
     public String getObservacoes() {
         return observacoes;
     }
-
     public Cliente getDono() {
         return dono;
     }
-
+    
     public void setDono(Cliente novoDono){
         if(novoDono == null){
             throw new DomainException("O novo dono não pode ser nulo.");

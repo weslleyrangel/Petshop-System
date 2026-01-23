@@ -48,6 +48,14 @@ public class Cliente {
         return email != null && email.contains("@") && email.contains(".");
     }
 
+    public void atualizarDados(String nome, String email, String endereco, String sexo) {
+        this.nome = nome;
+        this.email = email;
+        this.endereco = endereco;
+        this.sexo = sexo;
+        validate();
+    }
+
     public Long getId() {
         return id;
     }

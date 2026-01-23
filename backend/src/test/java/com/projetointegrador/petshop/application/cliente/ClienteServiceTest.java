@@ -2,11 +2,11 @@ package com.projetointegrador.petshop.application.cliente;
 
 import com.projetointegrador.petshop.domain.cliente.Cliente;
 import com.projetointegrador.petshop.domain.cliente.ClienteRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ClienteServiceTest {
     private static class FakeClienteRepository implements ClienteRepository {
@@ -46,6 +46,11 @@ public class ClienteServiceTest {
                     .filter(c -> c.getCpf() != null && c.getCpf().equals(cpf))
                     .findFirst();
         }
+
+        @Override
+        public boolean existsById(Long id) {
+            return storage.containsKey(id);
+        }
     }
 
     @Test
@@ -66,7 +71,7 @@ public class ClienteServiceTest {
         assertEquals(Long.valueOf(1L), novoCliente.getId());
 
         Optional<Cliente> clienteSalvoOpt = fakeRepository.findById(novoCliente.getId());
-        assertTrue("O cliente deveria ter sido salvo no repositório", clienteSalvoOpt.isPresent());
+        assertTrue(clienteSalvoOpt.isPresent(), "O cliente deveria ter sido salvo no repositório");
         
         Cliente clienteSalvo = clienteSalvoOpt.get();
         assertEquals(nome, clienteSalvo.getNome());

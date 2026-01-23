@@ -1,9 +1,10 @@
 package com.projetointegrador.petshop.application.produto;
 
-
+import com.projetointegrador.petshop.domain.exception.DomainException;
 import com.projetointegrador.petshop.domain.produto.Produto;
 import com.projetointegrador.petshop.domain.produto.ProdutoRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,8 @@ public class ProdutoService {
         this.produtoRepository = produtoRepository;
     }
 
-    public Produto cadastrarProduto(Produto produto) {
+    public Produto cadastrarProduto(String nome, String categoria, BigDecimal preco, int quantidadeEstoque, String descricao) {
+        Produto produto = new Produto(nome, categoria, preco, quantidadeEstoque, descricao);
         return produtoRepository.save(produto);
     }
 
@@ -27,22 +29,32 @@ public class ProdutoService {
         return produtoRepository.findById(id);
     }
 
-    public Produto atualizarProduto(Long id, Produto dadosAtualizados) {
-        return produtoRepository.findById(id).map(produto -> {
-            produto.setNome(dadosAtualizados.getNome());
-            produto.setPreco(dadosAtualizados.getPreco());
-            return produtoRepository.save(produto);
-        }).orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + id));
+    public Produto atualizarProduto(Long id, String nome, String categoria, BigDecimal preco, String descricao) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new DomainException("Produto não encontrado com ID: " + id));
+        
+        produto.atualizarDados(nome, categoria, preco, descricao);
+        return produtoRepository.save(produto);
+    }
+
+    public void adicionarEstoque(Long id, int quantidade) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new DomainException("Produto não encontrado com ID: " + id));
+        produto.incrementarEstoque(quantidade);
+        produtoRepository.save(produto);
     }
 
     public void decrementarEstoque(Long id, int quantidade) {
         Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + id));
+                .orElseThrow(() -> new DomainException("Produto não encontrado com ID: " + id));
         produto.decrementarEstoque(quantidade);
         produtoRepository.save(produto);
     }
 
     public void deletarProduto(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new DomainException("Produto não encontrado com ID: " + id);
+        }
         produtoRepository.deleteById(id);
     }
 }

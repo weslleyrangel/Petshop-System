@@ -1,10 +1,12 @@
 import { fetchData, postData, formatDate } from '../utils/api.js';
 
-/**
- * Renderiza a página de Agendamentos (Lista).
- * @param {HTMLElement} container - O elemento <main> onde o conteúdo será injetado.
- */
+let listaAgendamentos = [];
+let listaClientes = [];
+let listaPets = [];
+
 export async function render(container) {
+    const userRole = localStorage.getItem('role');
+
     container.innerHTML = `
         <div class="page-header">
             <h1 class="page-title">Lista de Agendamentos</h1>
@@ -15,16 +17,15 @@ export async function render(container) {
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Cliente</th>
                     <th>Pet</th>
                     <th>Serviço</th>
                     <th>Data</th>
-                    <th>Horário</th>
                     <th>Status</th>
+                    <th>Ações</th>
                 </tr>
                 </thead>
                 <tbody id="tabela-agendamentos">
-                    <tr><td colspan="7">Carregando...</td></tr>
+                    <tr><td colspan="6">Carregando...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -35,54 +36,63 @@ export async function render(container) {
     });
 
     try {
-        const agendamentos = await fetchData('/api/v1/agendamentos');
+        listaAgendamentos = await fetchData('/api/v1/agendamentos');
         const tabela = document.getElementById('tabela-agendamentos');
 
-        if (agendamentos && agendamentos.length > 0) {
-            tabela.innerHTML = agendamentos.map(ag => `
+        if (listaAgendamentos && listaAgendamentos.length > 0) {
+            tabela.innerHTML = listaAgendamentos.map(ag => `
                 <tr>
                     <td>${ag.id}</td>
-                    <td>${ag.cliente?.nome || 'N/A'}</td>
-                    <td>${ag.pet?.nome || 'N/A'}</td>
+                    <td>${ag.pet || 'N/A'}</td>
                     <td>${ag.servico || 'N/A'}</td>
-                    <td>${formatDate(ag.dataHora)}</td>
-                    <td>${ag.horario || 'N/A'}</td>
+                    <td>${formatDate(ag.data)}</td>
                     <td>${ag.status || 'N/A'}</td>
+                    <td class="actions-cell">
+                        ${userRole === 'ADMIN' ? `
+                        <button class="btn-icon btn-delete" data-id="${ag.id}" title="Cancelar">
+                            <i class="fas fa-ban"></i>
+                        </button>` : ''}
+                    </td>
                 </tr>
             `).join('');
+
+            if (userRole === 'ADMIN') {
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const id = btn.getAttribute('data-id');
+                        if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
+                            try {
+                                await postData(`/api/v1/agendamentos?id=${id}`, {}, 'DELETE');
+                                render(container);
+                            } catch (error) {
+                                alert('Erro ao cancelar agendamento: ' + error.message);
+                            }
+                        }
+                    });
+                });
+            }
         } else {
-            tabela.innerHTML = '<tr><td colspan="7">Nenhum agendamento encontrado.</td></tr>';
+            tabela.innerHTML = '<tr><td colspan="6">Nenhum agendamento encontrado.</td></tr>';
         }
     } catch (error) {
-        document.getElementById('tabela-agendamentos').innerHTML = `<tr><td colspan="7">Erro ao carregar agendamentos.</td></tr>`;
+        document.getElementById('tabela-agendamentos').innerHTML = `<tr><td colspan="6">Erro ao carregar agendamentos.</td></tr>`;
     }
 }
 
-/**
- * Renderiza o Formulário de Cadastro de Agendamento (baseado no Wireframe Page 7).
- * @param {HTMLElement} container - O elemento <main>.
- * @param {object} agendamento - Opcional. O objeto para edição.
- */
 async function renderFormulario(container, agendamento = {}) {
     const isEdit = agendamento.id != null;
     const pageTitle = isEdit ? 'Editar Agendamento' : 'Novo Agendamento';
 
-    // Listas para os <select>
-    let clientesOptions = '';
-    let petsOptions = '';
-
     try {
-        const clientes = await fetchData('/api/v1/clientes');
-        clientesOptions = clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
-
-        // Em um app real, o <select> de pets mudaria baseado no cliente
-        const pets = await fetchData('/api/v1/pets');
-        petsOptions = pets.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
-
+        listaClientes = await fetchData('/api/v1/clientes');
+        listaPets = await fetchData('/api/v1/pets');
     } catch (error) {
-        container.innerHTML = `<p>Erro ao carregar dados para o formulário. Tente novamente.</p>`;
+        container.innerHTML = `<p>Erro ao carregar dados. Tente novamente.</p>`;
         return;
     }
+
+    const clientesOptions = listaClientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+    const petsOptions = listaPets.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
 
     container.innerHTML = `
         <h1 class="page-title">${pageTitle}</h1>
@@ -112,35 +122,18 @@ async function renderFormulario(container, agendamento = {}) {
                         <option value="Banho">Banho</option>
                         <option value="Tosa">Tosa</option>
                         <option value="Banho e Tosa">Banho e Tosa</option>
-                        <option value="Exames de laboratório">Exames de laboratório</option>
-                        <option value="Vacinação">Vacinação</option>
-                        <option value="Hidratação">Hidratação</option>
-                        <option value="Massagem">Massagem</option>
+                        <option value="Consulta">Consulta Veterinária</option>
                     </select>
                 </div>
 
                 <div class="form-group-grid">
-                    <label for="dataHora" class="form-label">Data:</label>
-                    <input type="date" id="dataHora" name="dataHora" class="form-input" required />
-                </div>
-
-                <div class="form-group-grid">
-                    <label for="horario" class="form-label">Horário:</label>
-                    <input type="time" id="horario" name="horario" class="form-input" required />
+                    <label for="dataHora" class="form-label">Data e Hora:</label>
+                    <input type="datetime-local" id="dataHora" name="dataHora" class="form-input" required />
                 </div>
 
                 <div class="form-group-grid">
                     <label for="observacoes" class="form-label">Observações:</label>
                     <textarea id="observacoes" name="observacoes" class="form-textarea" style="min-height: 80px;"></textarea>
-                </div>
-
-                <div class="form-group-grid">
-                    <label class="form-label">Horários Disponíveis:</label>
-                    <div class="horarios-disponiveis" style="padding: 16px; border: 1px solid var(--border-color); border-radius: 8px; height: 180px; overflow-y: auto; background: var(--bg-light); display: flex; flex-direction: column; gap: 8px;">
-                        <!-- Esta parte seria preenchida dinamicamente -->
-                        <button type="button" class="btn" style="background: var(--bg-white); ...">09:15</button>
-                        <button type="button" class="btn" style="background: var(--bg-white); ...">10:40</button>
-                    </div>
                 </div>
 
                 <div class="form-actions col-span-2">
@@ -158,21 +151,11 @@ async function renderFormulario(container, agendamento = {}) {
         const formData = new FormData(form);
         const agendamentoData = Object.fromEntries(formData.entries());
 
-        // Converte IDs em objetos, como o back-end pode esperar
-        agendamentoData.cliente = { id: parseInt(agendamentoData.clienteId) };
-        agendamentoData.pet = { id: parseInt(agendamentoData.petId) };
-        delete agendamentoData.clienteId;
-        delete agendamentoData.petId;
-
-        // Define o status padrão
-        agendamentoData.status = 'AGENDADO';
-
-        const endpoint = isEdit ? `/api/v1/agendamentos/${agendamentoData.id}` : '/api/v1/agendamentos';
         const method = isEdit ? 'PUT' : 'POST';
 
         try {
-            await postData(endpoint, agendamentoData, method);
-            render(container); // Sucesso! Volta para a lista
+            await postData('/api/v1/agendamentos', agendamentoData, method);
+            render(container);
         } catch (error) {
             console.error("Erro ao salvar agendamento:", error);
             alert(`Erro ao salvar: ${error.message}`);
