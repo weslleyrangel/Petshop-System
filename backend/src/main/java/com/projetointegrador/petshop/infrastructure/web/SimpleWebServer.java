@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 public class SimpleWebServer {
 
     private static final int PORT = 8080;
+    // Caminho absoluto para a pasta do Front-end original
     private static final String FRONTEND_PATH = "C:/Users/wesll/Desktop/Petshop System/Front/src";
 
     private HttpServer server;
@@ -56,10 +57,13 @@ public class SimpleWebServer {
     public void start() throws IOException {
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
+        // Handler genérico para servir arquivos estáticos do Front-end original
         server.createContext("/", new StaticFileHandler());
+
+        // Rotas de API (mantidas iguais)
         server.createContext("/api/v1/auth/register", new RegisterHandler(authController));
         server.createContext("/api/v1/auth/login", new LoginHandler(authController));
-        server.createContext("/api/v1/auth/forgot-password", new ForgotPasswordHandler()); // Novo Handler
+        server.createContext("/api/v1/auth/forgot-password", new ForgotPasswordHandler());
         server.createContext("/api/v1/dashboard/stats", new DashboardStatsHandler(clienteController, petController, agendamentoController, produtoController, vendaController));
         server.createContext("/api/v1/clientes", new ClienteHandler(clienteController));
         server.createContext("/api/v1/pets", new PetHandler(petController));
@@ -82,20 +86,33 @@ public class SimpleWebServer {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             String uri = exchange.getRequestURI().getPath();
-            if (uri.equals("/")) uri = "/login.html";
+            
+            // Se for raiz, serve o login.html (ou index.html se preferir)
+            if (uri.equals("/")) {
+                uri = "/login.html";
+            }
+            
             if (uri.contains("..")) { sendResponse(exchange, 403, "Forbidden"); return; }
 
             File file = new File(FRONTEND_PATH + uri);
+            
             if (file.exists() && !file.isDirectory()) {
                 String contentType = "text/plain";
                 if (uri.endsWith(".html")) contentType = "text/html";
                 else if (uri.endsWith(".css")) contentType = "text/css";
                 else if (uri.endsWith(".js")) contentType = "application/javascript";
+                else if (uri.endsWith(".png")) contentType = "image/png";
+                else if (uri.endsWith(".jpg") || uri.endsWith(".jpeg")) contentType = "image/jpeg";
                 
+                // Adiciona cabeçalhos CORS para permitir que o front (se rodar separado) acesse a API, 
+                // embora aqui estejamos servindo tudo junto.
+                exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
                 exchange.getResponseHeaders().set("Content-Type", contentType);
+                
                 exchange.sendResponseHeaders(200, file.length());
                 try (OutputStream os = exchange.getResponseBody()) { Files.copy(file.toPath(), os); }
             } else {
+                System.err.println("Arquivo não encontrado: " + file.getAbsolutePath());
                 sendResponse(exchange, 404, "404 (Not Found)");
             }
         }
@@ -106,6 +123,11 @@ public class SimpleWebServer {
         public RegisterHandler(AuthController controller) { this.controller = controller; }
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
                 try {
                     Map<String, String> json = parseJson(readRequestBody(exchange.getRequestBody()));
@@ -124,6 +146,11 @@ public class SimpleWebServer {
         public LoginHandler(AuthController controller) { this.controller = controller; }
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
                 try {
                     Map<String, String> json = parseJson(readRequestBody(exchange.getRequestBody()));
@@ -137,14 +164,17 @@ public class SimpleWebServer {
         }
     }
 
-    // Novo Handler para Esqueci Senha (Simulação)
     static class ForgotPasswordHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
                 try {
                     readRequestBody(exchange.getRequestBody());
-
                     sendResponse(exchange, 200, "{\"message\":\"Email de recuperação enviado com sucesso.\"}");
                 } catch (Exception e) {
                     sendResponse(exchange, 500, "{\"error\":\"Erro ao processar solicitação.\"}");
@@ -168,6 +198,11 @@ public class SimpleWebServer {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
                 try {
                     int clientes = clienteController != null ? clienteController.listAll().size() : 0;
@@ -191,6 +226,11 @@ public class SimpleWebServer {
         public ClienteHandler(ClienteController controller) { this.controller = controller; }
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if (controller == null) { sendResponse(exchange, 503, "DB Offline"); return; }
             try {
                 String method = exchange.getRequestMethod();
@@ -215,12 +255,36 @@ public class SimpleWebServer {
                     sendResponse(exchange, 200, "{\"message\":\"Cliente atualizado\"}");
                 } else if ("DELETE".equalsIgnoreCase(method)) {
                     String query = exchange.getRequestURI().getQuery();
-                    Long id = Long.parseLong(query.split("=")[1]); // Espera ?id=1
-                    controller.delete(id);
-                    sendResponse(exchange, 200, "{\"message\":\"Cliente excluído\"}");
+                    Long id = null;
+                    if (query != null && query.contains("id=")) {
+                         id = Long.parseLong(query.split("=")[1]);
+                    } else {
+                        String path = exchange.getRequestURI().getPath();
+                        String idStr = path.substring(path.lastIndexOf('/') + 1);
+                        try { id = Long.parseLong(idStr); } catch (NumberFormatException e) {}
+                    }
+                    
+                    if (id != null) {
+                        try {
+                            controller.delete(id);
+                            sendResponse(exchange, 200, "{\"message\":\"Cliente excluído\"}");
+                        } catch (Exception e) {
+                            // Captura erro de chave estrangeira (cliente tem pets/vendas)
+                            if (e.getMessage().contains("foreign key constraint fails") || e.getMessage().contains("ConstraintViolation")) {
+                                sendResponse(exchange, 400, "{\"error\":\"Não é possível excluir o cliente pois ele possui registros vinculados (Pets, Vendas, etc).\"}");
+                            } else {
+                                throw e;
+                            }
+                        }
+                    } else {
+                        sendResponse(exchange, 400, "{\"error\":\"ID inválido\"}");
+                    }
                 } else sendResponse(exchange, 405, "Method Not Allowed");
             } catch (DomainException e) { sendResponse(exchange, 400, "{\"error\":\"" + e.getMessage() + "\"}"); }
-              catch (Exception e) { sendResponse(exchange, 500, "{\"error\":\"" + e.getMessage() + "\"}"); }
+              catch (Exception e) { 
+                  e.printStackTrace(); // Loga o erro completo no console do backend
+                  sendResponse(exchange, 500, "{\"error\":\"" + e.getMessage() + "\"}"); 
+              }
         }
     }
 
@@ -229,6 +293,11 @@ public class SimpleWebServer {
         public PetHandler(PetController controller) { this.controller = controller; }
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if (controller == null) { sendResponse(exchange, 503, "DB Offline"); return; }
             try {
                 String method = exchange.getRequestMethod();
@@ -237,8 +306,10 @@ public class SimpleWebServer {
                     StringBuilder json = new StringBuilder("[");
                     for (int i = 0; i < lista.size(); i++) {
                         Pet p = lista.get(i);
-                        json.append(String.format("{\"id\":%d,\"nome\":\"%s\",\"especie\":\"%s\",\"raca\":\"%s\",\"idade\":%d,\"dono\":\"%s\"}", 
-                                p.getId(), p.getNome(), p.getEspecie(), p.getRaca(), p.getIdade(), p.getDono().getNome()));
+                        String donoNome = p.getDono() != null ? p.getDono().getNome() : "Sem dono";
+                        Long donoId = p.getDono() != null ? p.getDono().getId() : null;
+                        json.append(String.format("{\"id\":%d,\"nome\":\"%s\",\"especie\":\"%s\",\"raca\":\"%s\",\"idade\":%d,\"dono\":\"%s\",\"donoId\":%d,\"sexo\":\"%s\",\"observacoes\":\"%s\"}", 
+                                p.getId(), p.getNome(), p.getEspecie(), p.getRaca(), p.getIdade(), donoNome, donoId, p.getSexo(), p.getObservacoes()));
                         if (i < lista.size() - 1) json.append(",");
                     }
                     json.append("]");
@@ -268,9 +339,21 @@ public class SimpleWebServer {
                     sendResponse(exchange, 200, "{\"message\":\"Pet atualizado\"}");
                 } else if ("DELETE".equalsIgnoreCase(method)) {
                     String query = exchange.getRequestURI().getQuery();
-                    Long id = Long.parseLong(query.split("=")[1]);
-                    controller.delete(id);
-                    sendResponse(exchange, 200, "{\"message\":\"Pet excluído\"}");
+                    Long id = null;
+                    if (query != null && query.contains("id=")) {
+                         id = Long.parseLong(query.split("=")[1]);
+                    } else {
+                        String path = exchange.getRequestURI().getPath();
+                        String idStr = path.substring(path.lastIndexOf('/') + 1);
+                        try { id = Long.parseLong(idStr); } catch (NumberFormatException e) {}
+                    }
+                    
+                    if (id != null) {
+                        controller.delete(id);
+                        sendResponse(exchange, 200, "{\"message\":\"Pet excluído\"}");
+                    } else {
+                        sendResponse(exchange, 400, "{\"error\":\"ID inválido\"}");
+                    }
                 } else sendResponse(exchange, 405, "Method Not Allowed");
             } catch (DomainException e) { sendResponse(exchange, 400, "{\"error\":\"" + e.getMessage() + "\"}"); }
               catch (Exception e) { sendResponse(exchange, 500, "{\"error\":\"" + e.getMessage() + "\"}"); }
@@ -282,6 +365,11 @@ public class SimpleWebServer {
         public AgendamentoHandler(AgendamentoController controller) { this.controller = controller; }
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if (controller == null) { sendResponse(exchange, 503, "DB Offline"); return; }
             try {
                 String method = exchange.getRequestMethod();
@@ -290,8 +378,9 @@ public class SimpleWebServer {
                     StringBuilder json = new StringBuilder("[");
                     for (int i = 0; i < lista.size(); i++) {
                         var a = lista.get(i);
-                        json.append(String.format("{\"id\":%d,\"pet\":\"%s\",\"servico\":\"%s\",\"data\":\"%s\",\"status\":\"%s\"}", 
-                                a.getId(), a.getPet().getNome(), a.getServico(), a.getDataHora().toString(), a.getStatus()));
+                        String petNome = a.getPet() != null ? a.getPet().getNome() : "N/A";
+                        json.append(String.format("{\"id\":%d,\"pet\":\"%s\",\"petNome\":\"%s\",\"servico\":\"%s\",\"data\":\"%s\",\"status\":\"%s\"}", 
+                                a.getId(), petNome, petNome, a.getServico(), a.getDataHora().toString(), a.getStatus()));
                         if (i < lista.size() - 1) json.append(",");
                     }
                     json.append("]");
@@ -303,9 +392,21 @@ public class SimpleWebServer {
                     sendResponse(exchange, 201, "{\"message\":\"Agendamento criado\"}");
                 } else if ("DELETE".equalsIgnoreCase(method)) {
                     String query = exchange.getRequestURI().getQuery();
-                    Long id = Long.parseLong(query.split("=")[1]);
-                    controller.cancel(id); // Cancelar em vez de deletar fisicamente
-                    sendResponse(exchange, 200, "{\"message\":\"Agendamento cancelado\"}");
+                    Long id = null;
+                    if (query != null && query.contains("id=")) {
+                         id = Long.parseLong(query.split("=")[1]);
+                    } else {
+                        String path = exchange.getRequestURI().getPath();
+                        String idStr = path.substring(path.lastIndexOf('/') + 1);
+                        try { id = Long.parseLong(idStr); } catch (NumberFormatException e) {}
+                    }
+                    
+                    if (id != null) {
+                        controller.cancel(id);
+                        sendResponse(exchange, 200, "{\"message\":\"Agendamento cancelado\"}");
+                    } else {
+                        sendResponse(exchange, 400, "{\"error\":\"ID inválido\"}");
+                    }
                 } else sendResponse(exchange, 405, "Method Not Allowed");
             } catch (DomainException e) { sendResponse(exchange, 400, "{\"error\":\"" + e.getMessage() + "\"}"); }
               catch (Exception e) { sendResponse(exchange, 500, "{\"error\":\"" + e.getMessage() + "\"}"); }
@@ -317,24 +418,53 @@ public class SimpleWebServer {
         public ProdutoHandler(ProdutoController controller) { this.controller = controller; }
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if (controller == null) { sendResponse(exchange, 503, "DB Offline"); return; }
             try {
-                if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                String method = exchange.getRequestMethod();
+                if ("GET".equalsIgnoreCase(method)) {
                     List<Produto> lista = controller.listAll();
                     StringBuilder json = new StringBuilder("[");
                     for (int i = 0; i < lista.size(); i++) {
                         Produto p = lista.get(i);
-                        json.append(String.format("{\"id\":%d,\"nome\":\"%s\",\"categoria\":\"%s\",\"preco\":%s,\"estoque\":%d,\"quantidadeEstoque\":%d}", 
-                                p.getId(), p.getNome(), p.getCategoria(), p.getPreco(), p.getQuantidadeEstoque(), p.getQuantidadeEstoque()));
+                        json.append(String.format("{\"id\":%d,\"nome\":\"%s\",\"categoria\":\"%s\",\"preco\":%s,\"estoque\":%d,\"quantidadeEstoque\":%d,\"descricao\":\"%s\"}", 
+                                p.getId(), p.getNome(), p.getCategoria(), p.getPreco(), p.getQuantidadeEstoque(), p.getQuantidadeEstoque(), p.getDescricao()));
                         if (i < lista.size() - 1) json.append(",");
                     }
                     json.append("]");
                     sendResponse(exchange, 200, json.toString());
-                } else if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                } else if ("POST".equalsIgnoreCase(method)) {
                     Map<String, String> json = parseJson(readRequestBody(exchange.getRequestBody()));
                     controller.create(json.get("nome"), json.get("categoria"), new BigDecimal(json.get("preco")), 
                             Integer.parseInt(json.get("quantidadeEstoque")), json.get("descricao"));
                     sendResponse(exchange, 201, "{\"message\":\"Produto criado\"}");
+                } else if ("PUT".equalsIgnoreCase(method)) {
+                    Map<String, String> json = parseJson(readRequestBody(exchange.getRequestBody()));
+                    Long id = Long.parseLong(json.get("id"));
+                    controller.update(id, json.get("nome"), json.get("categoria"), new BigDecimal(json.get("preco")), 
+                            Integer.parseInt(json.get("quantidadeEstoque")), json.get("descricao"));
+                    sendResponse(exchange, 200, "{\"message\":\"Produto atualizado\"}");
+                } else if ("DELETE".equalsIgnoreCase(method)) {
+                    String query = exchange.getRequestURI().getQuery();
+                    Long id = null;
+                    if (query != null && query.contains("id=")) {
+                         id = Long.parseLong(query.split("=")[1]);
+                    } else {
+                        String path = exchange.getRequestURI().getPath();
+                        String idStr = path.substring(path.lastIndexOf('/') + 1);
+                        try { id = Long.parseLong(idStr); } catch (NumberFormatException e) {}
+                    }
+                    
+                    if (id != null) {
+                        controller.delete(id);
+                        sendResponse(exchange, 200, "{\"message\":\"Produto excluído\"}");
+                    } else {
+                        sendResponse(exchange, 400, "{\"error\":\"ID inválido\"}");
+                    }
                 } else sendResponse(exchange, 405, "Method Not Allowed");
             } catch (DomainException e) { sendResponse(exchange, 400, "{\"error\":\"" + e.getMessage() + "\"}"); }
               catch (Exception e) { sendResponse(exchange, 500, "{\"error\":\"" + e.getMessage() + "\"}"); }
@@ -346,21 +476,28 @@ public class SimpleWebServer {
         public VendaHandler(VendaController controller) { this.controller = controller; }
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            addCorsHeaders(exchange);
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
             if (controller == null) { sendResponse(exchange, 503, "DB Offline"); return; }
             try {
-                if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                String method = exchange.getRequestMethod();
+                if ("GET".equalsIgnoreCase(method)) {
                     List<Venda> lista = controller.listAll();
                     StringBuilder json = new StringBuilder("[");
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
                     for (int i = 0; i < lista.size(); i++) {
                         Venda v = lista.get(i);
-                        json.append(String.format("{\"id\":%d,\"cliente\":\"%s\",\"data\":\"%s\",\"total\":%s,\"status\":\"%s\"}", 
-                                v.getId(), v.getCliente().getNome(), v.getDataHora().format(formatter), v.getValorTotal(), v.getStatus()));
+                        String clienteNome = v.getCliente() != null ? v.getCliente().getNome() : "N/A";
+                        json.append(String.format("{\"id\":%d,\"cliente\":\"%s\",\"clienteNome\":\"%s\",\"data\":\"%s\",\"total\":%s,\"status\":\"%s\"}", 
+                                v.getId(), clienteNome, clienteNome, v.getDataHora().format(formatter), v.getValorTotal(), v.getStatus()));
                         if (i < lista.size() - 1) json.append(",");
                     }
                     json.append("]");
                     sendResponse(exchange, 200, json.toString());
-                } else if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                } else if ("POST".equalsIgnoreCase(method)) {
                     String body = readRequestBody(exchange.getRequestBody());
 
                     Long clienteId = extractIdFromNested(body, "cliente");
@@ -420,9 +557,6 @@ public class SimpleWebServer {
         private Long extractLong(String json, String key) {
             try { String val = extractValue(json, key); return val != null ? Long.parseLong(val) : null; } catch (Exception e) { return null; }
         }
-        private Integer extractInt(String json, String key) {
-            try { String val = extractValue(json, key); return val != null ? Integer.parseInt(val) : null; } catch (Exception e) { return null; }
-        }
         private String extractValue(String json, String key) {
             int keyIdx = json.indexOf("\"" + key + "\"");
             if (keyIdx == -1) keyIdx = json.indexOf(key + ":");
@@ -442,8 +576,15 @@ public class SimpleWebServer {
 
     // --- Utilitários ---
 
+    private static void addCorsHeaders(HttpExchange exchange) {
+        exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    }
+
     private static void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+        addCorsHeaders(exchange);
         byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
         exchange.sendResponseHeaders(statusCode, responseBytes.length);
         try (OutputStream os = exchange.getResponseBody()) { os.write(responseBytes); }

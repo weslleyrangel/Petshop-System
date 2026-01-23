@@ -26,8 +26,20 @@ public class ProdutoController {
         return produtoService.buscarPorId(id);
     }
 
-    public Produto update(Long id, String nome, String categoria, BigDecimal preco, String descricao) {
-        return produtoService.atualizarProduto(id, nome, categoria, preco, descricao);
+    public Produto update(Long id, String nome, String categoria, BigDecimal preco, int quantidadeEstoque, String descricao) {
+        // Atualiza os dados básicos
+        Produto produto = produtoService.atualizarProduto(id, nome, categoria, preco, descricao);
+        
+        // Ajusta o estoque se necessário (lógica simplificada, idealmente seria via add/removeStock)
+        // Se a quantidade nova for diferente da atual, ajustamos a diferença
+        int diferenca = quantidadeEstoque - produto.getQuantidadeEstoque();
+        if (diferenca > 0) {
+            produtoService.adicionarEstoque(id, diferenca);
+        } else if (diferenca < 0) {
+            produtoService.decrementarEstoque(id, Math.abs(diferenca));
+        }
+        
+        return produtoService.buscarPorId(id).orElse(produto);
     }
 
     public void addStock(Long id, int quantidade) {
